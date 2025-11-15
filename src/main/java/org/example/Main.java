@@ -132,6 +132,30 @@ public class Main {
                 return;
             }
             
+            // 获取身份证信息
+            String provinceName = regionSelector.getProvinceName();
+            String cityName = regionSelector.getCityName();
+            String districtName = regionSelector.getDistrictName();
+            LocalDate birthDate = birthdayPanel.getDate();
+            boolean isMale = genderPanel.isMale();
+            
+            // 生成随机姓名
+            String[] familyNames = {"王", "李", "张", "刘", "陈", "杨", "赵", "黄", "周", "吴", "徐", "孙", "胡", "朱", "高", "林", "何", "郭", "马", "罗", "梁", "宋", "郑", "谢", "韩", "唐", "冯", "于", "董", "萧", "程", "曹", "袁", "邓", "许", "傅", "沈", "曾", "彭", "吕", "苏", "卢", "蒋", "蔡", "贾", "丁", "魏", "薛", "叶", "阎", "余", "潘", "杜", "戴", "夏", "钟", "汪", "田", "任", "姜", "范", "方", "石", "姚", "谭", "廖", "邹", "熊", "金", "陆", "郝", "孔", "白", "崔", "康", "毛", "邱", "秦", "江", "史", "顾", "侯", "邵", "孟", "龙", "万", "段", "漕", "钱", "汤", "尹", "黎", "易", "常", "武", "乔", "贺", "赖", "龚", "文"};
+            String[] givenNames = {"伟", "芳", "秀英", "娜", "敏", "静", "丽", "强", "磊", "军", "洋", "勇", "艳", "杰", "涛", "明", "超", "秀兰", "霞", "平", "刚", "桂英", "芳", "波", "德", "梅", "雪", "辉", "英", "健", "国", "兰", "慧", "永", "红", "祥", "凤", "琴", "华", "平", "丽", "军", "涛", "明", "超", "秀兰", "霞", "平", "刚", "桂英", "芳", "波", "德", "梅", "雪", "辉", "英", "健", "国", "兰", "慧", "永", "红", "祥", "凤", "琴", "华"};
+            Random random = new Random();
+            String name = familyNames[random.nextInt(familyNames.length)] + givenNames[random.nextInt(givenNames.length)];
+            
+            // 生成详细地址
+            String[] streets = {"中山路", "解放路", "人民路", "建设路", "公园路", "和平路", "中华路", "胜利路", "青年路", "延安路"};
+            String[] communities = {"阳光小区", "花园社区", "幸福家园", "和谐小区", "温馨家园", "绿色家园", "金色家园", "蓝色港湾", "梦幻社区", "未来城"};
+            String street = streets[random.nextInt(streets.length)];
+            int streetNumber = random.nextInt(999) + 1;
+            String community = communities[random.nextInt(communities.length)];
+            int buildingNumber = random.nextInt(99) + 1;
+            int unitNumber = random.nextInt(10) + 1;
+            int roomNumber = random.nextInt(999) + 1;
+            String address = provinceName + cityName + districtName + street + streetNumber + "号" + community + buildingNumber + "栋" + unitNumber + "单元" + roomNumber + "室";
+            
             // 创建新窗口显示图片
             JFrame imageFrame = new JFrame("生成图片");
             imageFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -160,17 +184,70 @@ public class Main {
             
             // 设置绘制文本的样式
             g2d.setColor(Color.BLACK); // 黑色文本
-            g2d.setFont(new Font("OCR-B 10 BT", Font.PLAIN, 90)); // 设置字体为身份证号码标准字体OCR-B 10 BT
             
-            // 计算文本位置（居中显示在图片下方）
+            // 绘制姓名
+            g2d.setFont(new Font("华文细黑", Font.PLAIN, 90));
             FontMetrics metrics = g2d.getFontMetrics();
-            int textWidth = metrics.stringWidth(id);
-            int textHeight = metrics.getHeight();
-            int x = (originalWidth - textWidth) / 2 + 140;
-            int y = originalHeight - textHeight - 1490; // 距离底部50像素
+            int nameWidth = metrics.stringWidth(name);
+            int nameX = (originalWidth - nameWidth) / 2 + 400; // 调整位置
+            int nameY = originalHeight - 1950; // 调整位置
+            g2d.drawString(name, nameX, nameY);
+            
+            // 绘制性别
+            String gender = isMale ? "男" : "女";
+            g2d.setFont(new Font("华文细黑", Font.PLAIN, 72));
+            metrics = g2d.getFontMetrics();
+            int genderWidth = metrics.stringWidth(gender);
+            int genderX = (originalWidth - genderWidth) / 2 + 400; // 调整位置
+            int genderY = originalHeight - 1800; // 调整位置
+            g2d.drawString(gender, genderX, genderY);
+            
+            // 绘制民族
+            String nation = "汉";
+            g2d.setFont(new Font("华文细黑", Font.PLAIN, 72));
+            metrics = g2d.getFontMetrics();
+            int nationWidth = metrics.stringWidth(nation);
+            int nationX = (originalWidth - nationWidth) / 2 + 700; // 调整位置
+            int nationY = originalHeight - 1800; // 调整位置
+            g2d.drawString(nation, nationX, nationY);
+            
+            // 绘制出生日期
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日");
+            String birthDateStr = birthDate.format(formatter);
+            g2d.setFont(new Font("华文细黑", Font.PLAIN, 72));
+            metrics = g2d.getFontMetrics();
+            int birthWidth = metrics.stringWidth(birthDateStr);
+            int birthX = (originalWidth - birthWidth) / 2 + 400; // 调整位置
+            int birthY = originalHeight - 1650; // 调整位置
+            g2d.drawString(birthDateStr, birthX, birthY);
+            
+            // 绘制地址
+            g2d.setFont(new Font("华文细黑", Font.PLAIN, 60));
+            metrics = g2d.getFontMetrics();
+            int addressX = (originalWidth - metrics.stringWidth(provinceName)) / 2 + 400; // 调整位置
+            int addressY = originalHeight - 1550; // 调整位置
+            
+            // 地址可能需要换行显示
+            StringBuilder line = new StringBuilder();
+            for (char c : address.toCharArray()) {
+                if (metrics.stringWidth(line.toString() + c) > 1000) { // 每行最大宽度
+                    g2d.drawString(line.toString(), addressX, addressY);
+                    line.setLength(0);
+                    addressY += 80; // 行间距
+                }
+                line.append(c);
+            }
+            if (line.length() > 0) {
+                g2d.drawString(line.toString(), addressX, addressY);
+            }
             
             // 绘制身份证号码
-            g2d.drawString(id, x, y);
+            g2d.setFont(new Font("OCR-B 10 BT", Font.PLAIN, 90)); // 设置字体为身份证号码标准字体OCR-B 10 BT
+            metrics = g2d.getFontMetrics();
+            int idWidth = metrics.stringWidth(id);
+            int idX = (originalWidth - idWidth) / 2 + 140; // 保持原有位置
+            int idY = originalHeight - metrics.getHeight() - 1490; // 保持原有位置
+            g2d.drawString(id, idX, idY);
             
             // 释放资源
             g2d.dispose();
