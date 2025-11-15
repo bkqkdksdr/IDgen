@@ -53,22 +53,20 @@ public class Main {
         resultField.setEditable(false);
         actionPanel.add(generateButton);
         actionPanel.add(resultField);
+
         // 复制按钮和生成图片按钮
         JPanel copyPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton copyButton = new JButton("复制");
         JLabel copyStatusLabel = new JLabel("");
-        copyButton.addActionListener(e -> {
-            String text = resultField.getText();
-            if (text != null && !text.isEmpty()) {
-                java.awt.Toolkit.getDefaultToolkit().getSystemClipboard()
-                        .setContents(new java.awt.datatransfer.StringSelection(text), null);
-                copyStatusLabel.setText("复制成功");
-            }
-        });
         copyPanel.add(copyButton);
         copyPanel.add(copyStatusLabel);
         
-        ImageGeneratorPanel imageGeneratorPanel = new ImageGeneratorPanel(frame);
+        // 生成图片按钮
+        JPanel imagePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton generateImageButton = new JButton("生成图片");
+
+        imagePanel.add(generateImageButton);
+        
         // 6) 结果说明
         JPanel tipPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         tipPanel.add(new JLabel("提示：地址展示中文，生成按区划编号。"));
@@ -78,9 +76,8 @@ public class Main {
         panel.add(genderPanel);
         panel.add(actionPanel);
         panel.add(copyPanel);
-        panel.add(imageGeneratorPanel);
+        panel.add(imagePanel);
         panel.add(tipPanel);
-
         frame.setContentPane(panel);
         frame.setVisible(true);
 
@@ -110,7 +107,52 @@ public class Main {
             String id = IdNumberUtil.generateIdNumber(addressCode, birthStr, male, null);
             resultField.setText(id);
         });
+
+        copyButton.addActionListener(e -> {
+            String text = resultField.getText();
+            if (text != null && !text.isEmpty()) {
+                java.awt.Toolkit.getDefaultToolkit().getSystemClipboard()
+                        .setContents(new java.awt.datatransfer.StringSelection(text), null);
+                copyStatusLabel.setText("复制成功");
+            }else{
+                copyStatusLabel.setText("请先生成身份证号");
+            }
+        });
+
+        generateImageButton.addActionListener(e -> {
+            // 创建新窗口显示图片
+            JFrame imageFrame = new JFrame("生成图片");
+            imageFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            
+            // 加载fonts文件夹下的图片
+            String imagePath = System.getProperty("user.dir") + "/src/fonts/empty.png";
+            ImageIcon imageIcon = new ImageIcon(imagePath);
+            
+            // 检查图片是否成功加载
+            if (imageIcon.getImageLoadStatus() != java.awt.MediaTracker.COMPLETE) {
+                JOptionPane.showMessageDialog(imageFrame, "图片加载失败: " + imagePath, "错误", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            // 获取原始图片尺寸
+            int originalWidth = imageIcon.getIconWidth();
+            int originalHeight = imageIcon.getIconHeight();
+            
+            // 将图片缩小到一半
+            int newWidth = originalWidth / 2 ;
+            int newHeight = originalHeight / 2 ;
+            Image scaledImage = imageIcon.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+            ImageIcon scaledIcon = new ImageIcon(scaledImage);
+            
+            // 创建标签和滚动面板
+            JLabel imageLabel = new JLabel(scaledIcon);
+            JScrollPane scrollPane = new JScrollPane(imageLabel);
+            imageFrame.getContentPane().add(scrollPane);
+            
+            // 设置窗口大小为缩小后的图片尺寸加上边距
+            imageFrame.setSize(newWidth + 40  , newHeight + 40 );
+            imageFrame.setLocationRelativeTo(frame);
+            imageFrame.setVisible(true);
+        });
     }
-
-
 }
