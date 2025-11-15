@@ -2,6 +2,7 @@ package org.example;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -145,14 +146,39 @@ public class Main {
                 return;
             }
             
-            // 获取原始图片尺寸
-            int originalWidth = imageIcon.getIconWidth();
-            int originalHeight = imageIcon.getIconHeight();
+            // 获取原始图片
+            Image originalImage = imageIcon.getImage();
+            int originalWidth = originalImage.getWidth(null);
+            int originalHeight = originalImage.getHeight(null);
             
-            // 将图片缩小到一半
-            int newWidth = originalWidth / 2 ;
-            int newHeight = originalHeight / 2 ;
-            Image scaledImage = imageIcon.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+            // 创建缓冲图像以便进行绘制操作
+            BufferedImage bufferedImage = new BufferedImage(originalWidth, originalHeight, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g2d = bufferedImage.createGraphics();
+            
+            // 绘制原始图片
+            g2d.drawImage(originalImage, 0, 0, null);
+            
+            // 设置绘制文本的样式
+            g2d.setColor(Color.BLACK); // 黑色文本
+            g2d.setFont(new Font("OCR-B 10 BT", Font.PLAIN, 90)); // 设置字体为身份证号码标准字体OCR-B 10 BT
+            
+            // 计算文本位置（居中显示在图片下方）
+            FontMetrics metrics = g2d.getFontMetrics();
+            int textWidth = metrics.stringWidth(id);
+            int textHeight = metrics.getHeight();
+            int x = (originalWidth - textWidth) / 2 + 140;
+            int y = originalHeight - textHeight - 1490; // 距离底部50像素
+            
+            // 绘制身份证号码
+            g2d.drawString(id, x, y);
+            
+            // 释放资源
+            g2d.dispose();
+            
+            // 将绘制后的图片缩小到一半
+            int newWidth = originalWidth / 2;
+            int newHeight = originalHeight / 2;
+            Image scaledImage = bufferedImage.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
             ImageIcon scaledIcon = new ImageIcon(scaledImage);
             
             // 创建标签和滚动面板
@@ -161,7 +187,7 @@ public class Main {
             imageFrame.getContentPane().add(scrollPane);
             
             // 设置窗口大小为缩小后的图片尺寸加上边距
-            imageFrame.setSize(newWidth + 40  , newHeight + 40 );
+            imageFrame.setSize(newWidth + 40, newHeight + 40);
             imageFrame.setLocationRelativeTo(frame);
             imageFrame.setVisible(true);
         });
