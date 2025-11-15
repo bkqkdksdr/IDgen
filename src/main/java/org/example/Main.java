@@ -54,7 +54,7 @@ public class Main {
         actionPanel.add(generateButton);
         actionPanel.add(resultField);
 
-        // 复制按钮和生成图片按钮
+        // 复制按钮
         JPanel copyPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton copyButton = new JButton("复制");
         JLabel copyStatusLabel = new JLabel("");
@@ -64,8 +64,9 @@ public class Main {
         // 生成图片按钮
         JPanel imagePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton generateImageButton = new JButton("生成图片");
-
+        JLabel imageimageStatusLabel = new JLabel("");
         imagePanel.add(generateImageButton);
+        imagePanel.add(imageimageStatusLabel);
         
         // 6) 结果说明
         JPanel tipPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -84,6 +85,7 @@ public class Main {
         // 生成逻辑
         generateButton.addActionListener(e -> {
             copyStatusLabel.setText("");
+            imageimageStatusLabel.setText("");
 
             String provinceName = regionSelector.getProvinceName();
             String cityName = regionSelector.getCityName();
@@ -108,6 +110,7 @@ public class Main {
             resultField.setText(id);
         });
 
+        //复制逻辑
         copyButton.addActionListener(e -> {
             String text = resultField.getText();
             if (text != null && !text.isEmpty()) {
@@ -119,7 +122,15 @@ public class Main {
             }
         });
 
+        //生成图片逻辑
         generateImageButton.addActionListener(e -> {
+            // 检查是否先生成了身份证号
+            String id = resultField.getText();
+            if (id == null || id.isEmpty()) {
+                imageimageStatusLabel.setText("请先生成身份证号");
+                return;
+            }
+            
             // 创建新窗口显示图片
             JFrame imageFrame = new JFrame("生成图片");
             imageFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
