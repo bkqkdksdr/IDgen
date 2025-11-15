@@ -20,6 +20,7 @@ import java.time.format.DateTimeFormatter;
  * - 地址数据：从类路径 resources/output.json 加载，提供省/市/区三级联动。
  * - 生成规则：地址码(6) + 生日(yyyyMMdd) + 顺序码(3 位，奇数男/偶数女) + 校验码(GB 11643)。
  * - 支持“复制”按钮，直接放入系统剪贴板。
+ * - 支持“生成图片”按钮，点击后弹出新窗口显示 src/fonts/empty.png 图片。
  */
 public class Main {
     private static JComboBox<Integer> yearCombo;
@@ -35,7 +36,7 @@ public class Main {
         frame.setSize(900, 650); // 加宽并加高窗口，避免日期弹窗溢出
         frame.setLocationRelativeTo(null);
 
-        JPanel panel = new JPanel(new GridLayout(6, 1, 10, 10));
+        JPanel panel = new JPanel(new GridLayout(7, 1, 10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
         // 步骤 1：户籍地址（抽取为 RegionSelectorPanel）
@@ -52,7 +53,7 @@ public class Main {
         resultField.setEditable(false);
         actionPanel.add(generateButton);
         actionPanel.add(resultField);
-        // 复制按钮
+        // 复制按钮和生成图片按钮
         JPanel copyPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton copyButton = new JButton("复制");
         JLabel copyStatusLabel = new JLabel("");
@@ -66,7 +67,8 @@ public class Main {
         });
         copyPanel.add(copyButton);
         copyPanel.add(copyStatusLabel);
-
+        
+        ImageGeneratorPanel imageGeneratorPanel = new ImageGeneratorPanel(frame);
         // 6) 结果说明
         JPanel tipPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         tipPanel.add(new JLabel("提示：地址展示中文，生成按区划编号。"));
@@ -76,6 +78,7 @@ public class Main {
         panel.add(genderPanel);
         panel.add(actionPanel);
         panel.add(copyPanel);
+        panel.add(imageGeneratorPanel);
         panel.add(tipPanel);
 
         frame.setContentPane(panel);
