@@ -134,43 +134,19 @@ public class Main {
             
             // 获取身份证信息
             String provinceName = regionSelector.getProvinceName();
-            if (provinceName.contains("新疆")) {
-                provinceName = "新疆";
-            }
-            if (provinceName.contains("内蒙古")) {
-                provinceName = "内蒙古";
-            }
-            if (provinceName.contains("西藏")) {
-                provinceName = "西藏";
-            }
-            if (provinceName.contains("宁夏")) {
-                provinceName = "宁夏";
-            }
-            if (provinceName.contains("广西")) {
-                provinceName = "广西";
-            }
+            provinceName = Utils.simplifyProvinceName(provinceName);
             String cityName = regionSelector.getCityName();
-            cityName = cityName.contains("辖") ? "" : cityName;
+            cityName = Utils.handleRegionName(cityName);
             String districtName = regionSelector.getDistrictName();
-            districtName = districtName.contains("辖") ? "" : districtName;
+            districtName = Utils.handleRegionName(districtName);
             LocalDate birthDate = birthdayPanel.getDate();
             boolean isMale = genderPanel.isMale();
             
             // 生成随机姓名
-            String[] familyNames = {"王", "李", "张", "刘", "陈", "杨", "赵", "黄", "周", "吴", "徐", "孙", "胡", "朱", "高", "林", "何", "郭", "马", "罗", "梁", "宋", "郑", "谢", "韩", "唐", "冯", "于", "董", "萧", "程", "曹", "袁", "邓", "许", "傅", "沈", "曾", "彭", "吕", "苏", "卢", "蒋", "蔡", "贾", "丁", "魏", "薛", "叶", "阎", "余", "潘", "杜", "戴", "夏", "钟", "汪", "田", "任", "姜", "范", "方", "石", "姚", "谭", "廖", "邹", "熊", "金", "陆", "郝", "孔", "白", "崔", "康", "毛", "邱", "秦", "江", "史", "顾", "侯", "邵", "孟", "龙", "万", "段", "漕", "钱", "汤", "尹", "黎", "易", "常", "武", "乔", "贺", "赖", "龚", "文"};
-            String[] givenNames = {"伟", "芳", "娜", "敏", "静", "丽", "强", "磊", "军", "洋", "勇", "艳", "杰", "涛", "明", "超", "霞", "平", "刚", "波", "德", "梅", "雪", "辉", "英", "健", "国", "兰", "慧", "永", "红", "祥", "凤", "琴", "华"};            Random random = new Random();
-            String name = familyNames[random.nextInt(familyNames.length)] + givenNames[random.nextInt(givenNames.length)];
+            String name = Utils.generateRandomName();
             
             // 生成详细地址
-            String[] streets = {"中山路", "解放路", "人民路", "建设路", "公园路", "和平路", "中华路", "胜利路", "青年路", "延安路"};
-            String[] communities = {"阳光小区", "花园社区", "幸福家园", "和谐小区", "温馨家园", "绿色家园", "金色家园", "蓝色港湾", "梦幻社区", };
-            String street = streets[random.nextInt(streets.length)];
-            int streetNumber = random.nextInt(999) + 1;
-            String community = communities[random.nextInt(communities.length)];
-            int buildingNumber = random.nextInt(99) + 1;
-            int unitNumber = random.nextInt(8) + 1;
-            int roomNumber = random.nextInt(10) + 1;
-            String address = provinceName + cityName + districtName + street + streetNumber + "号" + community + buildingNumber + "栋" + unitNumber + "单元" + roomNumber + "室";
+            String address = Utils.generateDetailedAddress(provinceName, cityName, districtName);
             
             // 创建新窗口显示图片
             JFrame imageFrame = new JFrame("生成图片");
@@ -288,10 +264,7 @@ public class Main {
             g2d.drawString(issuingAuthority, authorityX, authorityY);
             
             // 绘制有效期限
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
-            LocalDate startDate = LocalDate.now().minusYears(random.nextInt(10) + 1); // 1-10年前
-            LocalDate endDate = startDate.plusYears(20); // 有效期20年
-            String validPeriod = startDate.format(dateFormatter) + "-" + endDate.format(dateFormatter);
+            String validPeriod = Utils.generateValidPeriod();
             g2d.setFont(new Font("华文细黑", Font.PLAIN, 60));
             metrics = g2d.getFontMetrics();
             int periodWidth = metrics.stringWidth(validPeriod);
