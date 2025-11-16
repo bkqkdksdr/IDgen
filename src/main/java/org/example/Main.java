@@ -201,6 +201,19 @@ public class Main {
             // 设置绘制文本的样式
             g2d.setColor(Color.BLACK); // 黑色文本
             
+            // 绘制头像
+            String headImagePath = System.getProperty("user.dir") + "/src/fonts/head.png";
+            ImageIcon headIcon = new ImageIcon(headImagePath);
+            if (headIcon.getImageLoadStatus() == java.awt.MediaTracker.COMPLETE) {
+                Image headImage = headIcon.getImage();
+                // 设置头像大小和位置（调整这些值以适应身份证模板）
+                int headWidth = 400; // 头像宽度
+                int headHeight = 500; // 头像高度
+                int headX = originalWidth - headWidth  - 180; // 头像X坐标
+                int headY = originalHeight - headHeight - 1900; // 头像Y坐标
+                g2d.drawImage(headImage, headX, headY, headWidth, headHeight, null);
+            }
+            
             // 绘制姓名
             g2d.setFont(new Font("华文细黑", Font.BOLD, 70));
             FontMetrics metrics = g2d.getFontMetrics();
