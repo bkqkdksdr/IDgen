@@ -265,6 +265,27 @@ public class Main {
             int idY = originalHeight - metrics.getHeight() - 1490; // 保持原有位置
             g2d.drawString(id, idX, idY);
             
+            // 绘制签发机关
+            String issuingAuthority = provinceName + cityName + districtName + "分局";
+            g2d.setFont(new Font("华文细黑", Font.BOLD, 60));
+            metrics = g2d.getFontMetrics();
+            int authorityWidth = metrics.stringWidth(issuingAuthority);
+            int authorityX = (originalWidth - authorityWidth) / 2 + 60; // 调整位置
+            int authorityY = originalHeight - 310; // 调整位置
+            g2d.drawString(issuingAuthority, authorityX, authorityY);
+            
+            // 绘制有效期限
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+            LocalDate startDate = LocalDate.now().minusYears(random.nextInt(10) + 1); // 1-10年前
+            LocalDate endDate = startDate.plusYears(20); // 有效期20年
+            String validPeriod = startDate.format(dateFormatter) + "-" + endDate.format(dateFormatter);
+            g2d.setFont(new Font("华文细黑", Font.PLAIN, 60));
+            metrics = g2d.getFontMetrics();
+            int periodWidth = metrics.stringWidth(validPeriod);
+            int periodX = (originalWidth - periodWidth) / 2 +  125; // 调整位置
+            int periodY = originalHeight - 170; // 调整位置
+            g2d.drawString(validPeriod, periodX, periodY);
+            
             // 释放资源
             g2d.dispose();
             
