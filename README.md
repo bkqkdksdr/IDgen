@@ -13,12 +13,18 @@
 
 ### 图片生成功能
 - **身份证信息图片**：生成包含完整身份证信息的图片，包括：
-  - 随机生成的姓名
+  - 右上角头像显示
+  - 随机生成的姓名（加粗显示）
   - 选择的性别和出生日期
   - 固定为汉族的民族信息
-  - 完整的地址信息（省市区+随机详细地址）
-  - 生成的身份证号码
-- **字体规范**：身份证号码使用标准 OCR-B 10 BT 字体，其他信息使用华文细黑字体
+  - 完整的地址信息（省市区+随机详细地址，自动换行）
+  - 生成的身份证号码（标准OCR字体）
+  - 自动生成的签发机关信息
+  - 自动计算的有效期限（1-10年前起始，20年有效期）
+- **字体规范**：
+  - 身份证号码：标准 OCR-B 10 BT 字体
+  - 姓名、性别、民族、地址、签发机关：华文细黑字体
+  - 出生日期、有效期限：常规华文细黑字体
 - **自动换行**：地址信息自动换行显示，确保完整展示
 
 ## 技术栈与依赖
@@ -36,6 +42,7 @@
 src/
 ├── fonts/
 │   ├── empty.png          # 身份证模板图片
+│   ├── head.png           # 身份证头像图片
 │   └── result_color.png   # 生成结果示例图片
 ├── main/
 │   ├── java/org/example/
@@ -45,7 +52,8 @@ src/
 │   │   ├── GenderSelectorPanel.java # 性别选择面板
 │   │   ├── IdNumberUtil.java        # 身份证号码生成工具类
 │   │   ├── AddressCodeUtil.java     # 地址数据加载与查询
-│   │   └── ExcelToAddressJson.java  # Excel转JSON辅助工具
+│   │   ├── ExcelToAddressJson.java  # Excel转JSON辅助工具
+│   │   └── Utils.java               # 通用工具类（字符串/数字处理）
 │   └── resources/
 │       └── output.json              # 省市区地址数据
 └── test/
@@ -61,6 +69,7 @@ src/
 - **IdNumberUtil.java**：身份证号码生成工具，实现 GB 11643 规则
 - **AddressCodeUtil.java**：加载和查询地址数据，支持省市区联动
 - **ExcelToAddressJson.java**：将 Excel 格式的地址数据转换为 JSON 格式
+- **Utils.java**：通用工具类，包含姓名生成、地址生成、地址格式化、有效期限生成等字符串和数字处理方法
 
 ## 数据准备
 
@@ -150,12 +159,32 @@ String customSequence = "123";
 String idNumber = IdNumberUtil.generateIdNumber(addressCode, birth, male, customSequence);
 ```
 
+### 使用工具类
+
+```java
+// 生成随机姓名
+String name = Utils.generateRandomName();
+
+// 生成详细地址
+String address = Utils.generateDetailedAddress("北京市", "", "东城区");
+
+// 简化省份名称
+String simplifiedProvince = Utils.simplifyProvinceName("新疆维吾尔自治区");
+
+// 处理区域名称
+String handledCityName = Utils.handleRegionName("市辖区");
+
+// 生成有效期限
+String validPeriod = Utils.generateValidPeriod();
+```
+
 ## 注意事项
 
 1. **地址数据加载**：启动时若提示「未能加载地址数据」，请检查 `src/main/resources/output.json` 文件是否存在且格式正确
 2. **字体支持**：身份证号码使用 OCR-B 10 BT 字体，若系统未安装此字体，会自动回退到默认字体
 3. **图片显示**：生成的图片会缩小显示，以便完整展示在窗口中
-4. **数据合法性**：本工具生成的身份证号码仅用于测试和学习，请勿用于非法用途
+4. **头像显示**：确保 `src/fonts/head.png` 文件存在，否则不会显示头像
+5. **数据合法性**：本工具生成的身份证号码仅用于测试和学习，请勿用于非法用途
 
 ## 字体安装（可选）
 
